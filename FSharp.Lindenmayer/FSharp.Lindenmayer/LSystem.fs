@@ -30,3 +30,8 @@ module LSystem =
         |> forward
         |> Seq.item gen
         |> Seq.toList
+
+    let str2symlist text =
+        text
+        |> Seq.map (fun c -> Symbol c)
+        |> List.ofSeq
