@@ -11,6 +11,9 @@ module SvgExport =
 <!DOCTYPE html>
 <html>
 <head>
+<style>
+svg path { stroke-width:1; fill: transparent; }
+</style>
 </head>
 <body>
 <div style="text-align: center; width: 100%">
@@ -27,11 +30,16 @@ module SvgExport =
 """
     
     let toSvg scaleX scaleY (ops : Operations seq) =
-        let asString = function
+        let rand = new System.Random()
+        let r = rand.Next(0, 64)
+        let g = rand.Next(0, 96)
+        let b = rand.Next(0, 128)
+        let asString color op =
+            match op with
             | Draw (p1, p2) ->
-              sprintf """<line x1="%f" y1="%f" x2="%f" y2="%f" style="stroke:rgb(0,0,192);stroke-width:1" />""" (scaleX p1.X) (scaleY p1.Y) (scaleX p2.X) (scaleY p2.Y)
+              sprintf """<path d="M%f %f L%f %f" style="stroke:rgb(%i,%i,%i)" />""" (scaleX p1.X) (scaleY p1.Y) (scaleX p2.X) (scaleY p2.Y) ((color + r) % 256) ((color + g) % 256) ((color + b) % 256)
         [ yield header
-          for op in ops -> asString op
+          for i, op in Seq.indexed ops -> asString i op
           yield footer ]
         |> String.concat "\n"
 
